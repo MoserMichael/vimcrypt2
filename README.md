@@ -14,11 +14,17 @@ The VIMCRYPT2 plugin solves the issue as follows:
 
 # OSX Gotchas.
 
+I got the following issues on OsX Catalina (10.15.7):
+
+### default vim does not have python3 enabled
+
 VIM is installed by default on OSX it is located in ```/usr/bin/vim```, however that version currently has no support for the python3, you can install a proper vim with brew
 
 ```brew install vim```
 
 Now that one is put to ```/usr/local/bin/vim```.
+
+### multiple versions of openssl
 
 On OSX you do have openssl installed by default, however they use the LibreSSL fork 
 
