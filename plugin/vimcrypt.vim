@@ -304,6 +304,12 @@ function! s:OpenSSLWritePre()
 
     python3 run_enc_dec( 'write' )
     
+    " can't access buffer variables from python
+    if g:openssl_enc_key2 != ''
+        call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
+        let g:openssl_enc_key2 = ''
+    endif
+
     call s:OpenSSLCheckError("ENCRYPT") 
 
 endfunction
