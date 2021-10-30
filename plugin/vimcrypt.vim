@@ -1,7 +1,7 @@
-if exists("vimcrypt_encrypted_loaded")
+if exists("vimcrypt2_encrypted_loaded")
     finish
 endif
-let vimcrypt_encrypted_loaded = 1
+let vimcrypt2_encrypted_loaded = 1
 
 " use openssl to encrypt decrypt files.
 " copied/adapted from https://github.com/vim-scripts/openssl.vim/blob/master/plugin/openssl.vim
