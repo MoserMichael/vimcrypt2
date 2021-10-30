@@ -1,6 +1,6 @@
 # VIMCRYPT2 vim plugin - encrypt your files with openssl
 
-I had my adaptation for encrypting/decrypting files with vim [VIMCRYPPT](https://github.com/MoserMichael/vimcrypt), now it has a problem: you need to enter the encryption key every time that the file is read/decrypted and every time that the file is saved/encryted.
+I had my adaptation for encrypting/decrypting files with vim [VIMCRYPT](https://github.com/MoserMichael/vimcrypt), now it has a problem: you need to enter the encryption key every time that the file is read/decrypted and every time that the file is saved/encryted.
 
 Now it is quite possible to make a typo, while saving the file. In this event you might have lost your precious file, as you may no longer be aware of the current encryption key.
 
