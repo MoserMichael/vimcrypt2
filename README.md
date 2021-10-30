@@ -47,10 +47,16 @@ OpenSSL 3.0.0 7 sep 2021 (Library: OpenSSL 3.0.0 7 sep 2021)
 
 Now the interesting detail: the output of these two utilities can't be mixed.
 
-The following command encrypts and decrypts a string with the same password, while using the same libre ssl version of openssl
+The following command encrypts and decrypts a string with the same password, while using the same version of openssl
+
 
 ```
-echo '123' | openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/bin/openssl enc -d -aes-256-ecb -pass pass:blabla 
+echo '123' | /usr/bin/openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/bin/openssl enc -d -aes-256-ecb -pass pass:blabla
+123
+
+echo '123' | /usr/local/opt/openssl/bin/openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/local/opt/openssl/bin/openssl enc -d -aes-256-ecb -pass pass:blabla
+123
+
 ```
 
 However the same does not work, if you  try to decrypt the output of the libre ssl fork with a different utility from OpenSSL.
