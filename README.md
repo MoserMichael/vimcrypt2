@@ -4,11 +4,11 @@ I had my adaptation for encrypting/decrypting files with vim [VIMCRYPPT](https:/
 
 Now it is quite possible to make a typo, while saving the file. In this event you might have lost your precious file, as you may no longer be aware of the current encryption key.
 
-One fix might be to make a backup before saving the file, in this event you may be lucky with the backup.
+One fix might be to make a backup before saving the file, in this event you may be lucky with the backup. That's what VIMCRYPT is doing.
 
-The VIMCRYPT2 plugin solves the issue as follows:
+The VIMCRYPT2 plugin solves this issue as follows:
 
-- After decrypting a file, we take the decryption key and save it in memory. Now the key is not kept in plain text form, it is encrypted with a master key, the master key is a random  key that is generated per editor session.
+- After decrypting a file, we take the decryption key and save it in memory. Now the key is not kept in plain text form, it is encrypted with a master key, the master key is a random key that is generated per editor session.
 - The very same key that has been used for decryption is then used for encryption, when the file is saved back to disk.
 - The key is passed to openssl via a pipe, and not via a command line option. It would be visible to anyone, as a command line option, it is less exposed, as it is passed via a pipe. Now this can't be done with vimscript, that's were we need to use python3;
 
@@ -64,6 +64,6 @@ echo '123' | /usr/bin/openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/local
 
 ```
 
-This is something that should be remembered, when moving encrypted files from location to location.
+This is something that should be remembered, when moving encrypted files between different locations.
 
 
