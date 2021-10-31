@@ -72,4 +72,17 @@ echo '123' | /usr/bin/openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/local
 
 This is something that should be remembered, when moving encrypted files between different locations.
 
+## Supported ciphers
+
+you can get the list of supported ciphers as follows
+
+```
+/usr/bin/openssl enc -list
+
+/usr/local/opt/openssl/bin/openssl enc -list
+```
+
+The OpenSSL version supports more ciphers than the LibreSSL version; 
+For example OpenSSL has ```chacha20``` , whereas LibreSSL doesn't.
+
 

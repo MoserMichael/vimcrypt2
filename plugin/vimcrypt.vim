@@ -1,16 +1,7 @@
-if exists("vimcrypt2_encrypted_loaded")
+if exists("vimcrypt_encrypted_loaded")
     finish
 endif
-let vimcrypt2_encrypted_loaded = 1
-
-" use openssl to encrypt decrypt files.
-" copied/adapted from https://github.com/vim-scripts/openssl.vim/blob/master/plugin/openssl.vim
-" my changes;
-"   - use aes-ecb instead of aes-cbc. Reason: if file gets damaged then with cbc
-"   everything is lost after the damage point, ecb mode is good enough for text)
-"   - turn off shelltemp and undofile when working with encrypted stuff.
-"   - throw out the password safe stuff, I don't need it.
-"   - exclude vulnerable ciphers from the list of supported file extensions
+let vimcrypt_encrypted_loaded = 1
 
 
 python3 <<EOF
@@ -28,14 +19,6 @@ class RunCommand:
     trace_on = False
     exit_on_error = True
 
-    #    @staticmethod
-    #    def trace(on_off):
-    #        RunCommand.trace_on = on_off
-    #
-    #    @staticmethod
-    #    def exit_on_error(on_off):
-    #        RunCommand.exit_on_error = on_off
-    #
     def __init__(self):
         self.exit_code = 0
         self.command_line = ""
@@ -153,7 +136,6 @@ def _key_op(op, master_key, key):
                 return key
         elif op == 'dec':
             action = '-d'
-            #key = binascii.unhexlify( key )
             key_bin = bytes.fromhex(key)
             cmd.run(f"{openssl_bin} enc {action} -aes-256-ecb -pass fd:{read_file.fileno()}", key_bin)
             raw_key = cmd.output.decode('utf-8')
@@ -161,19 +143,6 @@ def _key_op(op, master_key, key):
 
         else:
             return ''
-
-#    read_end, write_end = os.pipe()
-#    write_file = os.fdopen(write_end,'w')
-#    write_file.write(master_key)
-#    write_file.close()
-#    fd_str=str(read_end)
-#    cmd.run(f"{openssl_bin} enc {action} -aes-256-ecb -pass fd:{fd_str}", key)
-
-
-    if cmd.exit_code == 0:
-       return binascii.hexlify( cmd.output )
-
-    return None
 
 
 def run_enc_dec(action):
@@ -196,6 +165,8 @@ def run_enc_dec(action):
 
             if cipher == "aes":
                cipher = "-aes-256-ecb"
+            else:
+               cipher = "-" + cipher
 
             if action == 'write':
                 ocmd = f"0,$!{openssl_bin} enc {cipher} -e -salt -pass fd:{read_file.fileno()}"
@@ -221,12 +192,8 @@ let g:open_ssl_mkey = ''
 
 function! s:OpenSSLGetMKey()
     if g:open_ssl_mkey == ''
-        if !executable("openssl")
-            echo "Can't find openssl. can't encrypt/decrypt"
-        else
-            let g:open_ssl_mkey = system("openssl rand -hex 9")
+        let g:open_ssl_mkey = system("openssl rand -hex 9")
         let g:open_ssl_mkey = substitute(g:open_ssl_mkey, '\n\+$', '', '')
-        endif
     endif
 endfunction
 
@@ -260,11 +227,17 @@ function! s:OpenSSLCheckError(action)
         echo @"
         echo "COULD NOT ENCRYPT"
         exe 'sleep 5'
-        return
+        return 0
     endif
+    return 1
 endfunction
 
 function! s:OpenSSLReadPost()
+
+    if !executable("openssl")
+        echo "Can't find openssl binary. can't encrypt/decrypt"
+        return
+    endif
 
     let l:cipher = expand("%:e")
 
@@ -274,15 +247,17 @@ function! s:OpenSSLReadPost()
         let g:openssl_enc_key2 = b:openssl_enc_key
     endif
 
+    let l:expr = ''
+
     python3 run_enc_dec('read')
 
-    " can't access buffer variables from python
-    if g:openssl_enc_key2 != ''
-        call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
-        let g:openssl_enc_key2 = ''
+    if s:OpenSSLCheckError("DECRYPT") != 0
+        " can't access buffer variables from python
+        if g:openssl_enc_key2 != ''
+            call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
+        endif
     endif
-
-    call s:OpenSSLCheckError("DECRYPT") 
+    let g:openssl_enc_key2 = ''
 
     set nobin
     set cmdheight&
@@ -293,7 +268,11 @@ endfunction
 
 function! s:OpenSSLWritePre()
 
-    echo "init"
+    if !executable("openssl")
+        echo "Can't find openssl binary. can't encrypt/decrypt"
+        return
+    endif
+
     call s:OpenSSLReadPre()
 
     if getbufvar("%","openssl_enc_key","$error$") == "$error$"
@@ -302,15 +281,22 @@ function! s:OpenSSLWritePre()
         let g:openssl_enc_key2 = b:openssl_enc_key
     endif
 
-    python3 run_enc_dec( 'write' )
-    
-    " can't access buffer variables from python
-    if g:openssl_enc_key2 != ''
-        call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
-        let g:openssl_enc_key2 = ''
+    if filereadable(expand("<afile>"))
+        let s:cmd = "cp -f ". expand("<afile>") . " " . expand("<afile>") . ".bak"
+        let s:res = system(s:cmd)
     endif
 
-    call s:OpenSSLCheckError("ENCRYPT") 
+    let l:expr = ''
+
+    python3 run_enc_dec( 'write' )
+    
+    if s:OpenSSLCheckError("ENCRYPT") != 0
+        " can't access buffer variables from python
+        if g:openssl_enc_key2 != ''
+            call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
+        endif
+    endif
+    let g:openssl_enc_key2 = ''
 
 endfunction
 
