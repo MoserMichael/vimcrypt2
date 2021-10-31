@@ -15,7 +15,7 @@ Changelog	    				|vimcrypt2-changelog|
 ==============================================================================
 INTRODUCTION					*vimcrypt2-introduction*
 
-The *vimcrypt2* ( *vimcrypt2.vim* ) will encrypt/decrypt files when read/written by vim.
+The *vimcrypt2* ( *vimcrypt2.vim* ) extension will encrypt/decrypt files when read/written by vim.
 You will have to enter the password that the encryption key is derived from once, for the same buffer.
 This is different from other solutions, where you have to enter the password each time that the buffer is saved.
 
