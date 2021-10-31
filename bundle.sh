@@ -1,12 +1,11 @@
 #!/bin/bash
 
 set -ex
+# remove files not under git
+git clean -f -d
 
-PLUGIN=vimcrypt2
-
-
-if [[ -f $PLUGIN.zip ]]; then
-  rm -f $PLUGIN.zip 
+if [[ -f vimcrypt2.zip ]]; then
+  rm -f vimcrypt2.zip 
 fi
 
-zip $PLUGIN.zip $(git ls-files | grep -v $0)
+zip vimcrypt2.zip $(git ls-files | grep -v $0)
