@@ -21,6 +21,15 @@ Other changes, relative to [openssl.vim](https://github.com/vim-scripts/openssl.
 - throw out the password safe stuff, I don't need it.
 
 
+# Install details
+
+Install from git
+
+```mkdir -p ~/.vim/pack/vendor/start/vimcrypt2; git clone --depth 1 https://github.com/MoserMichael/vimcrypt2 ~/.vim/pack/vendor/start/vimcrypt2```
+ 
+Download zip from [www.vim.org](https://www.vim.org/scripts/script.php?script_id=5985)
+```mkdir -p ~/.vim/pack/vendor/start/vimcrypt2; unzip vimcrypt2.zip -d  ~/.vim/pack/vendor/start/vimcrypt2```
+
 # OSX Gotchas.
 
 I got the following issues on OsX Catalina (10.15.7):
@@ -97,13 +106,5 @@ For example OpenSSL has ```chacha20``` , whereas LibreSSL doesn't.
 # Acknowledgement
 
 This plugin is based on openssl.vim by Noah Spurrier [link](https://github.com/vim-scripts/openssl.vim)
-
-# Install details
-Install from git
-
-```mkdir -p ~/.vim/pack/vendor/start/vimcrypt2; git clone --depth 1 https://github.com/MoserMichael/vimcrypt2 ~/.vim/pack/vendor/start/vimcrypt2```
- 
-Download zip from [www.vim.org](https://www.vim.org/scripts/script.php?script_id=5985)
-```mkdir -p ~/.vim/pack/vendor/start/vimcrypt2; unzip vimcrypt2.zip -d  ~/.vim/pack/vendor/start/vimcrypt2```
 
 
