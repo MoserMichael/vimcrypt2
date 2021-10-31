@@ -1,0 +1,56 @@
+*vimcrypt2.txt*  Plugin for working with git
+
+
+Author:  Michael Moser (https://github.com/MoserMichael)
+License: Same terms as Vim itself (see |license|)
+repository: http://github.com/MoserMichael/vimcrypt2
+
+
+CONTENTS					*vimcrypt2-contents*
+
+Introduction					|vimcrypt2-introduction|
+Command 		   			|vimcrypt2-command|
+Changelog	    				|vimcrypt2-changelog|
+
+==============================================================================
+INTRODUCTION					*vimcrypt2-introduction*
+
+The *vimcrypt2* ( *vimcrypt2.vim* ) will encrypt/decrypt files when read/written by vim.
+You will have to enter the password that the encryption key is derived from once, per editor session.
+This is different from other solutions, where you have to enter the password each time that the buffer is saved.
+
+The plugin encrypts files of the following extensions: *.aes,*.cast,*.rc5,*.desx
+
+------------------------------------------------------------------------------
+
+REQUIREMENTS
+
+You need to have openssl installed on the system, and in the current path.
+Also you need to have the python3 option enabled in vim.
+
+------------------------------------------------------------------------------
+COMMAND     					*vimcrypt2-command*
+
+Read and write a file with any one of the following extensions: *.aes,*.cast,*.rc5,*.desx
+The first read/write in the editor session will prompt for the password, following read/writes in the same editor session
+will use the same password.
+
+More details on the actions of this editor:
+
+- After decrypting a file, we take the password and save it in memory. Now the key is not kept in plain text form, 
+it is encrypted with a master key, the master key is a random key that is generated per editor session.
+
+- The very same key that has been used for decryption is then used for encryption, when the file is saved back to disk.
+
+- The key is passed to openssl via a pipe, and not via a command line option. It would be visible to anyone, as a command line option.
+The password is less exposed, as it is passed via a pipe. Now this can't be done with vimscript, that's were we need to use python3;
+ 
+ACKNOWLEDGEMENT
+
+This plugin is based on openssl.vim by Noah Spurrier https://github.com/vim-scripts/openssl.vim
+
+==============================================================================
+CHANGELOG					*vimcrypt2-changelog*
+
+0.1 2021-11-1
+    - First release
