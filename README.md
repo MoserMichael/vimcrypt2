@@ -8,9 +8,18 @@ One fix might be to make a backup before saving the file, in this event you may 
 
 The VIMCRYPT2 plugin solves this issue as follows:
 
-- After decrypting a file, we take the decryption key and save it in memory. Now the key is not kept in plain text form, it is encrypted with a master key, the master key is a random key that is generated per editor session.
+- After decrypting a file, we take the decryption key and save it in memory. Now the key is not kept in plain text form, it is encrypted with a master key, the master key is a random key that is generated per editor session. The encrypted key is kept as a buffer variable.
 - The very same key that has been used for decryption is then used for encryption, when the file is saved back to disk.
 - The key is passed to openssl via a pipe, and not via a command line option. It would be visible to anyone, as a command line option, it is less exposed, as it is passed via a pipe. Now this can't be done with vimscript, that's were we need to use python3;
+
+Other changes, relative to [openssl.vim](https://github.com/vim-scripts/openssl.vim)
+
+- use aes-256-ecb instead of aes-256-cbc. Reason: if the file gets damaged, then all the data after the damage point is lost, when using cipher block chaining (CBC). The damage would be limited to the AES block with the damaged byte, when using ECB
+- turn off vim options ```shelltemp``` and ```undofile``` when working with encrypted stuff.
+- exclude vulnerable ciphers from the list of supported file extensions (each supported file extension maps to a cipher type)
+- before encrypting an existing file: back up the old file. 
+- throw out the password safe stuff, I don't need it.
+
 
 # OSX Gotchas.
 
@@ -84,5 +93,9 @@ you can get the list of supported ciphers as follows
 
 The OpenSSL version supports more ciphers than the LibreSSL version; 
 For example OpenSSL has ```chacha20``` , whereas LibreSSL doesn't.
+
+# Acknowledgement
+
+This plugin is based on openssl.vim by Noah Spurrier [link](https://github.com/vim-scripts/openssl.vim)
 
 

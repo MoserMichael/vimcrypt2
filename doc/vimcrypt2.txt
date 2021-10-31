@@ -16,7 +16,7 @@ Changelog	    				|vimcrypt2-changelog|
 INTRODUCTION					*vimcrypt2-introduction*
 
 The *vimcrypt2* ( *vimcrypt2.vim* ) will encrypt/decrypt files when read/written by vim.
-You will have to enter the password that the encryption key is derived from once, per editor session.
+You will have to enter the password that the encryption key is derived from once, for the same buffer.
 This is different from other solutions, where you have to enter the password each time that the buffer is saved.
 
 The plugin encrypts files of the following extensions: *.aes,*.cast,*.rc5,*.desx
@@ -39,12 +39,27 @@ More details on the actions of this editor:
 
 - After decrypting a file, we take the password and save it in memory. Now the key is not kept in plain text form, 
 it is encrypted with a master key, the master key is a random key that is generated per editor session.
+The encrypted key is kept as a buffer variable.
 
 - The very same key that has been used for decryption is then used for encryption, when the file is saved back to disk.
 
 - The key is passed to openssl via a pipe, and not via a command line option. It would be visible to anyone, as a command line option.
 The password is less exposed, as it is passed via a pipe. Now this can't be done with vimscript, that's were we need to use python3;
  
+Other changes, relative to openssl.vim
+
+- use aes-256-ecb instead of aes-256-cbc. Reason: if the file gets damaged, then all the data after the damage point is lost, 
+when using cipher block chaining (CBC). The damage would be limited to the AES block with the damaged byte, when using ECB
+- turn off vim options shelltemp and undofile when working with encrypted stuff.
+- exclude vulnerable ciphers from the list of supported file extensions (each supported file extension maps to a cipher type)
+- before encrypting an existing file: back up the old file. 
+- throw out the password safe stuff, I don't need it.
+
+POSSIBLE ISSUES
+
+- use the same openssl for reading and writing the same encrypted file. You can't decrypt with LibreSSL, what has been encrypted with OpenSSL.
+- needs a vim that has been compiled with python3 option enabled.
+
 ACKNOWLEDGEMENT
 
 This plugin is based on openssl.vim by Noah Spurrier https://github.com/vim-scripts/openssl.vim
