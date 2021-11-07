@@ -267,6 +267,7 @@ function! s:OpenSSLReadPost()
 endfunction
 
 function! s:OpenSSLWritePre()
+    let s:openssl_curpos = getpos('.')
 
     if !executable("openssl")
         echo "Can't find openssl binary. can't encrypt/decrypt"
@@ -305,6 +306,9 @@ function! s:OpenSSLWritePost()
     set nobin
     set shell&
     set cmdheight&
+    
+    call setpos('.', s:openssl_curpos)
+
     redraw!
 endfunction
 
