@@ -173,7 +173,7 @@ def run_enc_dec(action):
             else:
                 ocmd = f"0,$!{openssl_bin} enc {cipher} -d -salt -pass fd:{read_file.fileno()}"
 
-            vim.command('let l:expr = "' + ocmd + '"')
+            vim.command('let g:last_o_cmd = "' + ocmd + '"')
             vim.command(ocmd) 
 
         key = ''
@@ -220,12 +220,10 @@ function! s:OpenSSLCheckError(action)
     if v:shell_error
         silent! 0,$y
         silent! undo
-        echo "COULD NOT " . a:action . " USING EXPRESSION: " . l:expr
+        echo "COULD NOT " . a:action . " USING EXPRESSION: " . g:last_o_cmd 
         echo "Note that your version of openssl may not have the given cipher engine built in"
         echo "even though the engine may be documented in the openssl man pages."
-        echo "ERROR FROM OPENSSL:"
-        echo @"
-        echo "COULD NOT ENCRYPT"
+        echo "sleeping for five seconds..."
         exe 'sleep 5'
         return 0
     endif
@@ -256,6 +254,9 @@ function! s:OpenSSLReadPost()
         if g:openssl_enc_key2 != ''
             call setbufvar('%', 'openssl_enc_key', g:openssl_enc_key2)
         endif
+    else
+        bdelete!
+        return
     endif
     let g:openssl_enc_key2 = ''
 
@@ -287,7 +288,7 @@ function! s:OpenSSLWritePre()
         let s:res = system(s:cmd)
     endif
 
-    let l:expr = ''
+    let g:last_o_cmd = ''
 
     python3 run_enc_dec( 'write' )
     
