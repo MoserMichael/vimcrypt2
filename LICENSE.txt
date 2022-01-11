@@ -1,3 +1,5 @@
+Copyright © 2021 Michael Moser <moser.michael@gmail.com>
+
 VIM LICENSE
 
 I)  There are no restrictions on distributing unmodified copies of Vim except
