@@ -123,6 +123,8 @@ echo '123' | /usr/local/opt/openssl/bin/openssl enc -e -aes-256-ecb -pass pass:b
 
 This is something that should be remembered, when moving encrypted files between different locations.
 
+(meanwhile added the ```-md md5``` option to the plugin, as i had to deal with a file from an old location).
+
 ## Supported ciphers
 
 you can get the list of supported ciphers as follows
