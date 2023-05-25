@@ -15,6 +15,11 @@ import time
 #openssl_bin="/usr/local/opt/openssl/bin/openssl"
 openssl_bin="openssl"
 
+# using the old one, as I had an issue with moving from an older
+# installation... Should use sha256.
+#
+add_opt="-md md5"
+
 class RunCommand:
     trace_on = False
     exit_on_error = True
@@ -169,9 +174,9 @@ def run_enc_dec(action):
                cipher = "-" + cipher
 
             if action == 'write':
-                ocmd = f"0,$!{openssl_bin} enc {cipher} -e -salt -pass fd:{read_file.fileno()}"
+                ocmd = f"0,$!{openssl_bin} enc {cipher} -e -salt -pass fd:{read_file.fileno()} {add_opt}"
             else:
-                ocmd = f"0,$!{openssl_bin} enc {cipher} -d -salt -pass fd:{read_file.fileno()}"
+                ocmd = f"0,$!{openssl_bin} enc {cipher} -d -salt -pass fd:{read_file.fileno()} {add_opt}"
 
             vim.command('let g:last_o_cmd = "' + ocmd + '"')
             vim.command(ocmd) 
