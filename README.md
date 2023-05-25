@@ -64,6 +64,20 @@ Now you can install openssl with brew, this gives you a real openssl
 ```
 $ brew install openssl
 
+```
+
+Let's find where openssl is installed
+
+```
+brew list openssl
+
+...
+/usr/local/opt/openssl/bin/openssl
+
+...
+
+
+
 $ /usr/local/opt/openssl/bin/openssl version
 OpenSSL 3.0.0 7 sep 2021 (Library: OpenSSL 3.0.0 7 sep 2021)
 ```
@@ -92,6 +106,20 @@ echo '123' | /usr/bin/openssl enc -e -aes-256-ecb -pass pass:blabla | /usr/local
 <error error error>
 
 ```
+
+What's the reason? it appears that libressl has a different way of deriving the AES encryption key from the password. In older versions of libressl
+they used MD5 for deriving the AES key from the password, then they changed it to SHA256.
+
+Adding the ```-md sha256``` or ```-md md5``` parameter to both versions of openssl will force them to use the same algorithm!!!
+
+```
+
+echo '123' | /usr/local/opt/openssl/bin/openssl enc -e -aes-256-ecb -pass pass:blabla -md md5 | /usr/bin/openssl enc -d -aes-256-ecb -md md5  -pass pass:blabla
+
+echo '123' | /usr/local/opt/openssl/bin/openssl enc -e -aes-256-ecb -pass pass:blabla -md sha256 | /usr/bin/openssl enc -d -aes-256-ecb -md sha256  -pass pass:blabla
+
+```
+
 
 This is something that should be remembered, when moving encrypted files between different locations.
 
