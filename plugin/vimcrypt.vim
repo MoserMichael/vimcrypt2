@@ -3,6 +3,18 @@ if exists("vimcrypt_encrypted_loaded")
 endif
 let vimcrypt_encrypted_loaded = 1
 
+"
+" cipher in use for data
+"
+"
+let g:vimcrypt2_cipher = "aes-256-ecb"
+
+"
+" 
+" using the old key derivation option, as I had an issue with moving from an older
+" installation... Should use sha256 instead
+"
+let g:vimcrypt2_addopt = "-md md5"
 
 python3 <<EOF
 
@@ -14,11 +26,6 @@ import time
 
 #openssl_bin="/usr/local/opt/openssl/bin/openssl"
 openssl_bin="openssl"
-
-# using the old one, as I had an issue with moving from an older
-# installation... Should use sha256.
-#
-add_opt="-md md5"
 
 class RunCommand:
     trace_on = False
@@ -150,10 +157,12 @@ def _key_op(op, master_key, key):
             return ''
 
 
-def run_enc_dec(action):
+def run_enc_dec(action): 
 
+    cipher = vim.eval("g:vimcrypt2_cipher")
+    add_opt = vim.eval("g:vimcrypt2_addopt")
+    
     try:
-        cipher = vim.eval( 'expand("%:e")' )
         master_key = vim.eval("g:open_ssl_mkey")
         buf_key = vim.eval("g:openssl_enc_key2")
 
@@ -168,15 +177,10 @@ def run_enc_dec(action):
 
         with _prepare_read_pipe(key) as read_file:
 
-            if cipher == "aes":
-               cipher = "-aes-256-ecb"
-            else:
-               cipher = "-" + cipher
-
             if action == 'write':
-                ocmd = f"0,$!{openssl_bin} enc {cipher} -e -salt -pass fd:{read_file.fileno()} {add_opt}"
+                ocmd = f"0,$!{openssl_bin} enc -{cipher} -e -salt -pass fd:{read_file.fileno()} {add_opt}"
             else:
-                ocmd = f"0,$!{openssl_bin} enc {cipher} -d -salt -pass fd:{read_file.fileno()} {add_opt}"
+                ocmd = f"0,$!{openssl_bin} enc -{cipher} -d -salt -pass fd:{read_file.fileno()} {add_opt}"
 
             vim.command('let g:last_o_cmd = "' + ocmd + '"')
             vim.command(ocmd) 
@@ -295,7 +299,7 @@ function! s:OpenSSLWritePre()
 
     let g:last_o_cmd = ''
 
-    python3 run_enc_dec( 'write' )
+    python3 run_enc_dec( 'write')
     
     if s:OpenSSLCheckError("ENCRYPT") != 0
         " can't access buffer variables from python

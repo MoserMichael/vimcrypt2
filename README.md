@@ -35,6 +35,21 @@ Install from git
 Download zip from [www.vim.org](https://www.vim.org/scripts/script.php?script_id=5985)
 ```mkdir -p ~/.vim/pack/vendor/start/vimcrypt2; unzip vimcrypt2.zip -d  ~/.vim/pack/vendor/start/vimcrypt2```
 
+# global parameters
+
+```
+g:vimcrypt2_cipher
+```
+
+By default it is: ```aes-256-ecb```
+
+```
+g:vimcrypt2_addopt
+```
+
+Additional options passed to openssl
+By default: setting ```-md md5``` - that's the old key derivation schema.
+
 # OSX Gotchas.
 
 I got the following issues on OsX Catalina (10.15.7):
