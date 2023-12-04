@@ -1,5 +1,17 @@
 # VIMCRYPT2 vim plugin - encrypt your files with openssl
 
+
+# Warning!
+
+Turns out i have been slightly reinventing the wheel.
+
+vim has the -x command line option to work with encrypted files.
+
+See ```:help encryption``` inside vim.
+
+
+# Intro 
+
 I had my adaptation for encrypting/decrypting files with vim [VIMCRYPT](https://github.com/MoserMichael/vimcrypt), now it has a problem: you need to enter the encryption key every time that the file is read/decrypted and every time that the file is saved/encryted.
 
 Now it is quite possible to make a typo, while saving the file. In this event you might have lost your precious file, as you may no longer be aware of the current encryption key.
@@ -139,6 +151,11 @@ echo '123' | /usr/local/opt/openssl/bin/openssl enc -e -aes-256-ecb -pass pass:b
 This is something that should be remembered, when moving encrypted files between different locations.
 
 (meanwhile added the ```-md md5``` option to the plugin, as i had to deal with a file from an old location).
+
+
+Beware of openssl upgrades!!!! They can change this salt derivation business at any notice, so a newer openssl version may not decrypt a file encrypted with an older one!!! (I think that's outrageous, but that is life, apparently...)
+
+/maybe one should better use the builtin encryption feature of vim./
 
 ## Supported ciphers
 
