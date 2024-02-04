@@ -157,6 +157,9 @@ Beware of openssl upgrades!!!! They can change this salt derivation business at 
 
 /maybe one should better use the builtin encryption feature of vim./
 
+However be aware that once the encrypted file has been read into memory, then it stays in memory in clear text, unencrypted! This means that any process that running on the same machine with access to your account would be able to get all of your secrets, while you view it in the editor. We learn from this that security is all in all a relative thing. Is your encrypted vim file at rest secure? I guess it is. However the whole situation a bit different, when the file is being viewed or edited.
+
+
 ## Supported ciphers
 
 you can get the list of supported ciphers as follows
